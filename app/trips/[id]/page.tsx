@@ -1,0 +1,29 @@
+import { ArrowLeft, Clock3, Droplets, MapPin, Route } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { GoogleMap, MapPoint } from "@/components/google-map";
+import { PhotoUpload } from "@/components/photo-upload";
+import { getPhotos, getTrip } from "@/lib/api";
+import { duration, formatDate, miles } from "@/lib/format";
+
+export default async function TripPage({ params }: { params: { id: string } }) {
+  const [trip, photos] = await Promise.all([getTrip(params.id), getPhotos(params.id)]); if (!trip) notFound();
+  const routePoints: MapPoint[] = trip.legs.flatMap(leg => {
+    const points: MapPoint[] = [];
+    if (leg.startLatitude != null && leg.startLongitude != null) points.push({ id: `${leg.id}-start`, tripId: trip.id, lat: leg.startLatitude, lng: leg.startLongitude, kind: "start", label: leg.startPoint || "Put-in", detail: trip.riverName });
+    if (leg.endLatitude != null && leg.endLongitude != null) points.push({ id: `${leg.id}-end`, tripId: trip.id, lat: leg.endLatitude, lng: leg.endLongitude, kind: "end", label: leg.endPoint || "Take-out", detail: trip.riverName });
+    return points;
+  });
+  if (!routePoints.length && trip.startLatitude != null && trip.startLongitude != null) routePoints.push({ id: `${trip.id}-start`, tripId: trip.id, lat: trip.startLatitude, lng: trip.startLongitude, kind: "start", label: trip.startPoint || "Put-in", detail: trip.riverName });
+  if (!routePoints.some(point => point.kind === "end") && trip.endLatitude != null && trip.endLongitude != null) routePoints.push({ id: `${trip.id}-end`, tripId: trip.id, lat: trip.endLatitude, lng: trip.endLongitude, kind: "end", label: trip.endPoint || "Take-out", detail: trip.riverName });
+  return <><div className="detail-top"><Link href="/trips"><ArrowLeft /> Back to trips</Link><PhotoUpload tripId={trip.id} /></div>
+    <header className="trip-hero"><div><span className="eyebrow">{trip.states.join(" · ") || "Trip detail"}</span><h1>{trip.name || trip.riverName}</h1><p>{trip.startPoint || "Unknown put-in"} <span>→</span> {trip.endPoint || "Unknown take-out"}</p></div><div className="trip-date"><span>Trip date</span><strong>{formatDate(trip)}</strong></div></header>
+    <section className="detail-stats"><div><Route /><span>Distance<strong>{miles(trip.distanceMiles)}</strong></span></div><div><Clock3 /><span>Time on water<strong>{duration(trip.timeMinutes)}</strong></span></div><div><MapPin /><span>Route<strong>{trip.legs.length} {trip.legs.length === 1 ? "leg" : "legs"}</strong></span></div><div><Droplets /><span>Waterway<strong>{trip.riverName}</strong></span></div></section>
+    <section className="panel trip-map-panel"><div className="panel-head"><div><span className="eyebrow">Put-in to take-out</span><h2>Trip map</h2></div></div><GoogleMap points={routePoints} connectRoute /></section>
+    <div className="detail-grid"><section className="panel detail-panel"><div className="panel-head"><div><span className="eyebrow">On the water</span><h2>Route details</h2></div></div>{trip.legs.length ? <div className="legs">{trip.legs.map((leg, i) => <div className="leg" key={leg.id}><span className="leg-dot">{i + 1}</span><div><strong>{leg.startPoint || "Unknown put-in"} → {leg.endPoint || "Unknown take-out"}</strong><p>{[miles(leg.distanceMiles), duration(leg.timeMinutes), leg.flowCfs ? `${leg.flowCfs.toLocaleString()} cfs` : null, leg.stageFeet ? `${leg.stageFeet} ft` : null].filter(x => x && x !== "—").join(" · ") || "No measurements recorded"}</p>{leg.notes && <small>{leg.notes}</small>}</div></div>)}</div> : <p className="muted">No route legs recorded.</p>}{trip.notes && <blockquote>“{trip.notes}”</blockquote>}</section>
+      <aside className="panel photo-panel"><div className="panel-head"><div><span className="eyebrow">Field notes</span><h2>Trip photos</h2></div></div>{photos.length ? <div className="photo-grid">{photos.map(photo => <figure key={photo.id}><Image src={photo.url} alt={photo.caption || `${trip.riverName} trip`} fill sizes="(max-width: 800px) 50vw, 240px" /><figcaption>{photo.caption}</figcaption></figure>)}</div> : <div className="photo-empty"><CameraIcon /><h3>No photos yet</h3><p>Add the first memory from this trip.</p><PhotoUpload tripId={trip.id} /></div>}</aside>
+    </div></>;
+}
+
+function CameraIcon() { return <span className="camera-art"><span /></span>; }

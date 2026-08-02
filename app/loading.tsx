@@ -1,0 +1,1 @@
+export default function Loading() { return <div className="loading-page"><div className="loading-line wide" /><div className="loading-line" /><div className="loading-grid">{[1,2,3,4].map(x => <div key={x} />)}</div></div>; }
