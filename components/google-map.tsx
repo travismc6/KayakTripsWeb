@@ -37,7 +37,13 @@ export function GoogleMap({ points, connectRoute = false }: { points: MapPoint[]
       const addMarker = (point: MapPoint, position: { lat: number; lng: number } | GeoLocation) => {
         bounds.extend(position);
         markerCount++;
-        const marker = new maps.Marker({ map, position, title: point.label, label: point.kind === "start" ? "S" : "E" });
+        const marker = new maps.Marker({
+          map,
+          position,
+          title: `${point.kind === "start" ? "Trip start" : "Trip end"}: ${point.label}`,
+          icon: markerIcon(point.kind),
+          label: { text: point.kind === "start" ? "S" : "E", color: "#ffffff", fontSize: "12px", fontWeight: "700" }
+        });
         const info = new maps.InfoWindow({ content: `<div class="map-popup"><strong>${escapeHtml(point.label)}</strong><br>${escapeHtml(point.detail)}<br><a href="/trips/${point.tripId}">View trip</a></div>` });
         marker.addListener("click", () => info.open({ map, anchor: marker }));
       };
@@ -65,6 +71,12 @@ export function GoogleMap({ points, connectRoute = false }: { points: MapPoint[]
 }
 
 function escapeHtml(value: string) { return value.replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char] || char)); }
+
+function markerIcon(kind: MapPoint["kind"]) {
+  const color = kind === "start" ? "#2f855a" : "#d65f4a";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="46" viewBox="0 0 34 46"><path fill="${color}" stroke="#fff" stroke-width="2" d="M17 1C8.2 1 1 8.2 1 17c0 12 16 27 16 27s16-15 16-27C33 8.2 25.8 1 17 1Z"/><circle cx="17" cy="17" r="9" fill="${color}"/></svg>`;
+  return { url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`, labelOrigin: { x: 17, y: 17 } };
+}
 
 function geocode(geocoder: InstanceType<GoogleMaps["Geocoder"]>, address: string) {
   return new Promise<GeoLocation | null>(resolve => geocoder.geocode({ address }, (results, status) => resolve(status === "OK" && results?.[0] ? results[0].geometry.location : null)));

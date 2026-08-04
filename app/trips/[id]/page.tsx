@@ -9,14 +9,9 @@ import { duration, formatDate, miles } from "@/lib/format";
 
 export default async function TripPage({ params }: { params: { id: string } }) {
   const [trip, photos] = await Promise.all([getTrip(params.id), getPhotos(params.id)]); if (!trip) notFound();
-  const routePoints: MapPoint[] = trip.legs.flatMap(leg => {
-    const points: MapPoint[] = [];
-    if (leg.startLatitude != null && leg.startLongitude != null) points.push({ id: `${leg.id}-start`, tripId: trip.id, lat: leg.startLatitude, lng: leg.startLongitude, kind: "start", label: leg.startPoint || "Put-in", detail: trip.riverName });
-    if (leg.endLatitude != null && leg.endLongitude != null) points.push({ id: `${leg.id}-end`, tripId: trip.id, lat: leg.endLatitude, lng: leg.endLongitude, kind: "end", label: leg.endPoint || "Take-out", detail: trip.riverName });
-    return points;
-  });
-  if (!routePoints.length && trip.startLatitude != null && trip.startLongitude != null) routePoints.push({ id: `${trip.id}-start`, tripId: trip.id, lat: trip.startLatitude, lng: trip.startLongitude, kind: "start", label: trip.startPoint || "Put-in", detail: trip.riverName });
-  if (!routePoints.some(point => point.kind === "end") && trip.endLatitude != null && trip.endLongitude != null) routePoints.push({ id: `${trip.id}-end`, tripId: trip.id, lat: trip.endLatitude, lng: trip.endLongitude, kind: "end", label: trip.endPoint || "Take-out", detail: trip.riverName });
+  const routePoints: MapPoint[] = [];
+  if (trip.startPoint || (trip.startLatitude != null && trip.startLongitude != null)) routePoints.push({ id: `${trip.id}-start`, tripId: trip.id, lat: trip.startLatitude ?? undefined, lng: trip.startLongitude ?? undefined, query: trip.startPoint ? `${trip.startPoint}, ${trip.riverName}, ${trip.states.join(", ") || "USA"}` : undefined, kind: "start", label: trip.startPoint || "Put-in", detail: `${trip.riverName} trip start` });
+  if (trip.endPoint || (trip.endLatitude != null && trip.endLongitude != null)) routePoints.push({ id: `${trip.id}-end`, tripId: trip.id, lat: trip.endLatitude ?? undefined, lng: trip.endLongitude ?? undefined, query: trip.endPoint ? `${trip.endPoint}, ${trip.riverName}, ${trip.states.join(", ") || "USA"}` : undefined, kind: "end", label: trip.endPoint || "Take-out", detail: `${trip.riverName} trip end` });
   return <><div className="detail-top"><Link href="/trips"><ArrowLeft /> Back to trips</Link><PhotoUpload tripId={trip.id} /></div>
     <header className="trip-hero"><div><span className="eyebrow">{trip.states.join(" · ") || "Trip detail"}</span><h1>{trip.name || trip.riverName}</h1><p>{trip.startPoint || "Unknown put-in"} <span>→</span> {trip.endPoint || "Unknown take-out"}</p></div><div className="trip-date"><span>Trip date</span><strong>{formatDate(trip)}</strong></div></header>
     <section className="detail-stats"><div><Route /><span>Distance<strong>{miles(trip.distanceMiles)}</strong></span></div><div><Clock3 /><span>Time on water<strong>{duration(trip.timeMinutes)}</strong></span></div><div><MapPin /><span>Route<strong>{trip.legs.length} {trip.legs.length === 1 ? "leg" : "legs"}</strong></span></div><div><Droplets /><span>Waterway<strong>{trip.riverName}</strong></span></div></section>
