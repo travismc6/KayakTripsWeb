@@ -6,6 +6,7 @@ import "./globals.css";
 import "./maps.css";
 import "./edit.css";
 import "./states.css";
+import "./state-rivers.css";
 import { Sidebar } from "@/components/sidebar";
 
 export const metadata = { title: { default: "KayakTrips", template: "%s · KayakTrips" }, description: "A living log of every river, lake, and mile." };
