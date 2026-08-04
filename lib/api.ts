@@ -1,4 +1,4 @@
-import { Person, Photo, TripDetail, TripPerson, TripSummary } from "./types";
+import { Comment, Person, Photo, TripDetail, TripPerson, TripSummary } from "./types";
 
 export const API_URL = process.env.KAYAKTRIPS_API_URL ?? "https://kayaktripsapi-production.up.railway.app";
 
@@ -18,3 +18,12 @@ export const getTrip = (id: string) => api<TripDetail | null>(`/api/trips/${id}`
 export const getPhotos = (id: string) => api<Photo[]>(`/api/trips/${id}/photos`, []);
 export const getPeople = () => api<Person[]>("/api/people", []);
 export const getTripPeople = (id: string) => api<TripPerson[]>(`/api/trips/${id}/people`, []);
+export const getComments = async (id: string) => {
+  try {
+    const response = await fetch(`${API_URL}/api/trips/${id}/comments`, { cache: "no-store" });
+    return response.ok ? response.json() as Promise<Comment[]> : [];
+  } catch (error) {
+    console.error(`KayakTrips request failed: /api/trips/${id}/comments`, error);
+    return [];
+  }
+};
