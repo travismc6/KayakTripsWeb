@@ -2,7 +2,9 @@
   "name": "kayaktrips-web",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,6 +14,7 @@
   "dependencies": {
     "@fontsource/dm-sans": "^5.0.20",
     "@fontsource/fraunces": "^5.0.19",
+    "@svg-maps/usa": "^2.0.0",
     "lucide-react": "^0.468.0",
     "next": "14.2.35",
     "react": "^18.3.1",

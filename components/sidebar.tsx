@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Download, Map, MapPinned, Menu, Users, X } from "lucide-react";
+import { BarChart3, Download, Map, MapPinned, Menu, Route, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -10,6 +10,7 @@ const nav = [
   ["/", "Dashboard", BarChart3],
   ["/trips", "Trips", Map],
   ["/map", "Map", MapPinned],
+  ["/states", "States", Route],
   ["/people", "People", Users],
   ["/import", "Import", Download],
 ] as const;
