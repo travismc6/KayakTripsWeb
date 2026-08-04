@@ -12,7 +12,7 @@ export function TripPeople({ tripId, people, initialAssignments }: { tripId: str
   async function assign(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setError(null); const form = event.currentTarget; const data = new FormData(form);
     const response = await fetch(`/api/trips/${tripId}/people`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ personId: data.get("personId"), role: data.get("role") || null }) }); setBusy(false);
-    if (!response.ok) { setError(await response.text() || "Person could not be assigned."); return; }
+    if (!response.ok) { const body = await response.text(); try { setError(JSON.parse(body).message || "Person could not be assigned."); } catch { setError(body || "Person could not be assigned."); } return; }
     const assignment: TripPerson = await response.json(); setAssignments(current => [...current, assignment]); form.reset();
   }
   async function remove(personId: string) { setBusy(true); setError(null); const response = await fetch(`/api/trips/${tripId}/people/${personId}`, { method: "DELETE" }); setBusy(false); if (!response.ok) { setError(await response.text() || "Assignment could not be removed."); return; } setAssignments(current => current.filter(item => item.personId !== personId)); }
