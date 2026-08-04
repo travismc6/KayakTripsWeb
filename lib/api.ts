@@ -1,4 +1,4 @@
-import { Photo, TripDetail, TripSummary } from "./types";
+import { Person, Photo, TripDetail, TripPerson, TripSummary } from "./types";
 
 export const API_URL = process.env.KAYAKTRIPS_API_URL ?? "https://kayaktripsapi-production.up.railway.app";
 
@@ -16,3 +16,5 @@ async function api<T>(path: string, fallback: T): Promise<T> {
 export const getTrips = () => api<TripSummary[]>("/api/trips", []);
 export const getTrip = (id: string) => api<TripDetail | null>(`/api/trips/${id}`, null);
 export const getPhotos = (id: string) => api<Photo[]>(`/api/trips/${id}/photos`, []);
+export const getPeople = () => api<Person[]>("/api/people", []);
+export const getTripPeople = (id: string) => api<TripPerson[]>(`/api/trips/${id}/people`, []);

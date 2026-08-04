@@ -32,5 +32,8 @@ export type TripDetail = Omit<TripSummary, "state"> & {
 
 export type Photo = { id: string; tripId: string; url: string; caption: string | null; takenAt: string | null };
 
+export type Person = { id: string; name: string; email: string | null; isAdmin: boolean };
+export type TripPerson = { personId: string; name: string; isAdmin: boolean; role: string | null; assignedAt: string };
+
 export type ImportRow = { sourceRow: number; canImport: boolean; riverName: string | null; state: string | null; startDate: string | null; sourceDateText: string | null; distanceMiles: number | null; warnings: string[] };
 export type ImportPreview = { sheet: string | null; rowsRead: number; importableRows: number; skippedRows: number; rows: ImportRow[] };

@@ -1,10 +1,11 @@
 "use client";
 
-import { BarChart3, Download, Map, MapPinned, Menu, Route, Users, X } from "lucide-react";
+import { BarChart3, Download, FileDown, Map, MapPinned, Menu, Route, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Brand } from "./brand";
+import { CurrentPerson } from "./current-person";
 
 const nav = [
   ["/", "Dashboard", BarChart3],
@@ -26,8 +27,8 @@ export function Sidebar() {
       <nav>{nav.map(([href, label, Icon]) => {
         const active = href === "/" ? path === "/" : path.startsWith(href);
         return <Link key={href} href={href} className={active ? "active" : ""} onClick={() => setOpen(false)}><Icon size={19} />{label}</Link>;
-      })}</nav>
-      <div className="sidebar-foot"><div className="current-user">MC</div><div><strong>My paddling log</strong><span>Personal workspace</span></div></div>
+      })}<a href="/api/exports/database.csv" download><FileDown size={19} />Export CSV</a></nav>
+      <CurrentPerson />
     </aside>
   </>;
 }
