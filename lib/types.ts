@@ -25,9 +25,15 @@ export type TripLeg = {
   distanceMiles: number | null; measuredAt: string | null; notes: string | null;
 };
 
+export type TripPointOfInterest = {
+  id: string; type: string; name: string | null; description: string | null;
+  latitude: number; longitude: number;
+};
+
 export type TripDetail = Omit<TripSummary, "state"> & {
   name: string | null; states: string[]; startLatitude: number | null; startLongitude: number | null;
   endLatitude: number | null; endLongitude: number | null; legs: TripLeg[];
+  pointsOfInterest: TripPointOfInterest[];
 };
 
 export type Photo = { id: string; tripId: string; url: string; caption: string | null; takenAt: string | null };
