@@ -26,6 +26,19 @@
   pointer-events: none;
 }
 
+.photo-grid figcaption span,
+.photo-grid figcaption small,
+.photo-lightbox figcaption span,
+.photo-lightbox figcaption small {
+  display: block;
+}
+
+.photo-grid figcaption small {
+  margin-top: 2px;
+  font-size: .58rem;
+  opacity: .85;
+}
+
 .photo-lightbox {
   position: fixed;
   z-index: 1000;
@@ -59,6 +72,12 @@
   color: white;
   text-align: center;
   font-size: .82rem;
+}
+
+.photo-lightbox figcaption small {
+  margin-top: 4px;
+  color: rgba(255, 255, 255, .7);
+  font-size: .7rem;
 }
 
 .photo-lightbox-close {

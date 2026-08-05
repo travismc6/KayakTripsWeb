@@ -42,7 +42,7 @@ export function GoogleMap({ points, connectRoute = false }: { points: MapPoint[]
           position,
           title: `${point.kind === "start" ? "Trip start" : point.kind === "end" ? "Trip end" : point.poiType || "Point of interest"}: ${point.label}`,
           icon: markerIcon(point.kind, point.poiType),
-          label: point.kind === "end" ? { text: "E", color: "#ffffff", fontSize: "12px", fontWeight: "700" } : undefined
+          label: undefined
         });
         const info = new maps.InfoWindow({ content: `<div class="map-popup"><strong>${escapeHtml(point.label)}</strong><br>${escapeHtml(point.detail)}<br><a href="/trips/${point.tripId}">View trip</a></div>` });
         marker.addListener("click", () => info.open({ map, anchor: marker }));
@@ -75,13 +75,17 @@ function escapeHtml(value: string) { return value.replace(/[&<>'"]/g, char => ({
 
 function markerIcon(kind: MapPoint["kind"], poiType?: string) {
   const color = kind === "start" ? "#2f855a" : kind === "end" ? "#d65f4a" : poiColor(poiType);
-  const glyph = kind === "start" ? kayakGlyph() : kind === "poi" ? poiGlyph(poiType) : "";
+  const glyph = kind === "start" ? kayakGlyph() : kind === "end" ? finishGlyph() : poiGlyph(poiType);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="38" height="50" viewBox="0 0 38 50"><path fill="${color}" stroke="#fff" stroke-width="2" d="M19 1C9.1 1 1 9.1 1 19c0 13.5 18 29 18 29s18-15.5 18-29C37 9.1 28.9 1 19 1Z"/><circle cx="19" cy="19" r="11" fill="${color}"/>${glyph}</svg>`;
   return { url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`, labelOrigin: { x: 19, y: 19 } };
 }
 
 function kayakGlyph() {
   return `<path fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M10 21c3.2 3.5 14.8 3.5 18 0-5.2-2.3-12.8-2.3-18 0zM12 14l14 10M10.5 12.5l3 3M24.5 22.5l3 3"/><circle cx="19" cy="20" r="1.5" fill="#fff"/>`;
+}
+
+function finishGlyph() {
+  return `<path fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M13 27V11M14 12h12v9H14"/><path fill="#fff" d="M14 12h4v3h-4zm8 0h4v3h-4zm-4 3h4v3h-4zm-4 3h4v3h-4zm8 0h4v3h-4z"/>`;
 }
 
 function poiColor(type?: string) {

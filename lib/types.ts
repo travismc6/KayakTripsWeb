@@ -36,7 +36,7 @@ export type TripDetail = Omit<TripSummary, "state"> & {
   pointsOfInterest: TripPointOfInterest[];
 };
 
-export type Photo = { id: string; tripId: string; url: string; caption: string | null; takenAt: string | null };
+export type Photo = { id: string; tripId: string; personId: string | null; uploadedByName: string | null; url: string; caption: string | null; takenAt: string | null };
 
 export type Person = { id: string; name: string; email: string | null; isAdmin: boolean };
 export type TripPerson = { personId: string; name: string; isAdmin: boolean; role: string | null; assignedAt: string };
