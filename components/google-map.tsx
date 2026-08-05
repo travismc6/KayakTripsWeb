@@ -42,7 +42,7 @@ export function GoogleMap({ points, connectRoute = false }: { points: MapPoint[]
           position,
           title: `${point.kind === "start" ? "Trip start" : point.kind === "end" ? "Trip end" : point.poiType || "Point of interest"}: ${point.label}`,
           icon: markerIcon(point.kind, point.poiType),
-          label: { text: point.kind === "start" ? "S" : point.kind === "end" ? "E" : poiSymbol(point.poiType), color: "#ffffff", fontSize: "12px", fontWeight: "700" }
+          label: point.kind === "poi" ? undefined : { text: point.kind === "start" ? "S" : "E", color: "#ffffff", fontSize: "12px", fontWeight: "700" }
         });
         const info = new maps.InfoWindow({ content: `<div class="map-popup"><strong>${escapeHtml(point.label)}</strong><br>${escapeHtml(point.detail)}<br><a href="/trips/${point.tripId}">View trip</a></div>` });
         marker.addListener("click", () => info.open({ map, anchor: marker }));
@@ -75,8 +75,9 @@ function escapeHtml(value: string) { return value.replace(/[&<>'"]/g, char => ({
 
 function markerIcon(kind: MapPoint["kind"], poiType?: string) {
   const color = kind === "start" ? "#2f855a" : kind === "end" ? "#d65f4a" : poiColor(poiType);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="46" viewBox="0 0 34 46"><path fill="${color}" stroke="#fff" stroke-width="2" d="M17 1C8.2 1 1 8.2 1 17c0 12 16 27 16 27s16-15 16-27C33 8.2 25.8 1 17 1Z"/><circle cx="17" cy="17" r="9" fill="${color}"/></svg>`;
-  return { url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`, labelOrigin: { x: 17, y: 17 } };
+  const glyph = kind === "poi" ? poiGlyph(poiType) : "";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="38" height="50" viewBox="0 0 38 50"><path fill="${color}" stroke="#fff" stroke-width="2" d="M19 1C9.1 1 1 9.1 1 19c0 13.5 18 29 18 29s18-15.5 18-29C37 9.1 28.9 1 19 1Z"/><circle cx="19" cy="19" r="11" fill="${color}"/>${glyph}</svg>`;
+  return { url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`, labelOrigin: { x: 19, y: 19 } };
 }
 
 function poiColor(type?: string) {
@@ -86,8 +87,23 @@ function poiColor(type?: string) {
   return "#7251a3";
 }
 
-function poiSymbol(type?: string) {
-  return ({ campsite: "C", waterfall: "W", cave: "V", restroom: "R", "swimming-hole": "S", launch: "L", "take-out": "T", portage: "P", hazard: "!", parking: "P", "scenic-spot": "★", other: "•" } as Record<string, string>)[type || ""] || "•";
+function poiGlyph(type?: string) {
+  const stroke = `fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"`;
+  const glyphs: Record<string, string> = {
+    campsite: `<path ${stroke} d="M12 24l7-12 7 12M15 24l4-7 4 7M11 24h16"/>`,
+    waterfall: `<path ${stroke} d="M13 12h12M15 12v7c0 3-2 3-2 6M19 12v8c0 3 2 3 2 6M23 12v6c0 3 2 3 2 6"/>`,
+    cave: `<path ${stroke} d="M10 25l5-12h8l5 12M15 25v-4a4 4 0 018 0v4"/>`,
+    restroom: `<text x="19" y="23" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="9" font-weight="700">WC</text>`,
+    "swimming-hole": `<path ${stroke} d="M10 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0M10 22c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>`,
+    launch: `<path ${stroke} d="M11 24l15-10M13 13l3 4M23 21l3 4"/>`,
+    "take-out": `<path ${stroke} d="M11 24l15-10M13 13l3 4M23 21l3 4"/>`,
+    portage: `<path ${stroke} d="M11 22h16M13 18l3 4-3 4M25 18l-3 4 3 4"/>`,
+    hazard: `<path ${stroke} d="M19 11l9 16H10zM19 16v5M19 24h.01"/>`,
+    parking: `<text x="19" y="25" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="17" font-weight="700">P</text>`,
+    "scenic-spot": `<path ${stroke} d="M19 10l2.5 5.5 6 .6-4.5 4 1.3 5.9-5.3-3-5.3 3 1.3-5.9-4.5-4 6-.6z"/>`,
+    other: `<circle cx="19" cy="19" r="3" fill="#fff"/>`
+  };
+  return glyphs[type || ""] || glyphs.other;
 }
 
 function formatPoiType(type?: string) { return (type || "Point of interest").split("-").map(word => word[0]?.toUpperCase() + word.slice(1)).join(" "); }
