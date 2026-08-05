@@ -1,0 +1,96 @@
+.photo-open {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.photo-open:focus-visible {
+  outline: 3px solid var(--river);
+  outline-offset: -3px;
+}
+
+.photo-open img {
+  transition: transform .2s ease;
+}
+
+.photo-open:hover img {
+  transform: scale(1.025);
+}
+
+.photo-grid figcaption {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.photo-lightbox {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  padding: 58px 34px 34px;
+  display: grid;
+  place-items: center;
+  background: rgba(4, 18, 20, .92);
+}
+
+.photo-lightbox > figure {
+  width: min(1200px, 94vw);
+  height: min(860px, 86vh);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.photo-lightbox-image {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.photo-lightbox-image img {
+  object-fit: contain;
+}
+
+.photo-lightbox figcaption {
+  color: white;
+  text-align: center;
+  font-size: .82rem;
+}
+
+.photo-lightbox-close {
+  position: fixed;
+  z-index: 1;
+  top: 18px;
+  right: 22px;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: rgba(0, 0, 0, .28);
+}
+
+.photo-lightbox-close:hover {
+  background: rgba(255, 255, 255, .14);
+}
+
+.photo-lightbox-close svg {
+  width: 22px;
+}
+
+@media (max-width: 760px) {
+  .photo-lightbox {
+    padding: 62px 12px 18px;
+  }
+
+  .photo-lightbox > figure {
+    width: 100%;
+    height: 88vh;
+  }
+}
