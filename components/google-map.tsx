@@ -90,6 +90,7 @@ function finishGlyph() {
 
 function poiColor(type?: string) {
   if (type === "hazard") return "#b42318";
+  if (type === "restroom") return "#7a4b2a";
   if (["waterfall", "swimming-hole"].includes(type || "")) return "#168aad";
   if (["campsite", "scenic-spot"].includes(type || "")) return "#5b7f3a";
   return "#7251a3";
