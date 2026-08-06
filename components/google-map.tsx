@@ -101,7 +101,7 @@ function poiGlyph(type?: string) {
     campsite: `<path ${stroke} d="M12 24l7-12 7 12M15 24l4-7 4 7M11 24h16"/>`,
     waterfall: `<path ${stroke} d="M13 12h12M15 12v7c0 3-2 3-2 6M19 12v8c0 3 2 3 2 6M23 12v6c0 3 2 3 2 6"/>`,
     cave: `<path ${stroke} d="M10 25l5-12h8l5 12M15 25v-4a4 4 0 018 0v4"/>`,
-    restroom: `<text x="19" y="23" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="9" font-weight="700">WC</text>`,
+    restroom: `<path fill="#fff" d="M14.2 17.4c.4-2.1 2.1-3.4 4.3-3.5-.7-.8-.8-1.8-.3-2.9 2.4.5 4 2.1 4 4.1 0 .5-.1 1-.3 1.4 2.2.2 3.8 1.7 4 3.7 1.4.5 2.4 1.8 2.4 3.3 0 2-1.6 3.5-3.7 3.5H13.3c-2.1 0-3.7-1.5-3.7-3.5 0-1.6 1.1-3 2.7-3.4.1-1.2.8-2.2 1.9-2.7Z"/>`,
     "swimming-hole": `<path ${stroke} d="M10 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0M10 22c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>`,
     launch: `<path ${stroke} d="M11 24l15-10M13 13l3 4M23 21l3 4"/>`,
     "take-out": `<path ${stroke} d="M11 24l15-10M13 13l3 4M23 21l3 4"/>`,
